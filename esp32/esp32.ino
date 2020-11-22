@@ -15,10 +15,11 @@
 /* DECLARATION */
 const int DEBUG = 1;
 
-//const char* SSID     = "Slytherin";
-//const char* PASSWORD = "9WF^F^ua";
-const char* SSID     = "Gryffindor";
-const char* PASSWORD = "XnU3Xz^`";
+const char* SSID     = "Slytherin";
+const char* PASSWORD = "9WF^F^ua";
+
+//const char* SSID     = "Gryffindor";
+//const char* PASSWORD = "XnU3Xz^`";
 
 //Static IP address configuration
 IPAddress staticIP(192, 168, 1, 100);
@@ -28,8 +29,10 @@ IPAddress dns(8, 8, 8, 8);
 
 WiFiServer server(8000);
 WiFiClient client;
+
 char cmd[20];
 byte cmdIndex = 0;
+unsigned long cmdTime = 0;
 
 const int IN_A1 = 12;
 const int IN_A2 = 14;
@@ -45,6 +48,9 @@ const int FUNC_4 = 34;
 void connet();
 void host();
 void direct();
+void HighLight();
+void handler(void * parameter);
+void Blink(void * parameter);
 
 /* MAIN CODE HERE */
 void setup() {
@@ -62,47 +68,24 @@ void setup() {
     Serial.begin(9600);
   }
 
+  // Connect to WiFi
   connet();
 
+  // Start TCP Server
   server.begin();
-//  xTaskCreate(
-//    anotherTask, /* Task function. */
-//    "another Task", /* name of task. */
-//    10000, /* Stack size of task */
-//    NULL, /* parameter of the task */
-//    1, /* priority of the task */
-//    NULL); /* Task handle to keep track of created task */
+
+  // Set up handle client task to run independently.
+  xTaskCreate(
+    handler,
+    "Handler",   // Stack name for debug
+    2048,  // Stack size
+    NULL,
+    2,  // Priority, with 3 being the highest, and 0 being the lowest.
+    NULL);
 }
 
 void loop() {
-  if (!client.connected()) {
-    client = server.available();
-    return;
-  }
-
-  if (client) {
-    Serial.println("Client connected.");
-    HighLight();
-
-    while (client.connected()) {
-      if (client.available()) {
-        char c = client.read();
-
-        if (c == '\n') {
-          cmdIndex = 0;
-          direct();
-          client.println("ok");
-
-        } else {
-          cmd[cmdIndex] = c;
-          if (cmdIndex < 18) cmdIndex++;
-        }
-      }
-    }
-
-    client.stop();
-    Serial.println("Client Disconnected.");
-  }
+  // Empty. Things are done in Tasks.
 }
 
 /* CONFIG ESP AS WIFI CLIENT OR WIFI ACCESS POINT */
@@ -138,13 +121,55 @@ void host() {
 }
 
 /* HANDLERS */
+void handler(void * parameter) {
+  (void) parameter;
 
-/*
-  | Character |      Handle      |    Description    |
-  |-----------|:-----------------|-------------------|
-  |     go    |       go()       |      Go ahead     |
-*/
+  while (true) {
+    if (!client.connected()) {
+      client = server.available();
+    }
+
+    if (client) {
+      Serial.println("Client connected.");
+
+      while (client.connected()) {
+        if (client.available()) {
+          char c = client.read();
+
+          if (c == '\n') {
+            cmd[cmdIndex] = '\0';
+            cmdIndex = 0;
+
+            client.println("ok");
+
+            direct();
+
+          } else {
+            cmd[cmdIndex] = c;
+            if (cmdIndex < 18) {
+              cmdIndex++;
+            }
+          }
+        }
+      }
+
+      Reset();
+      client.stop();
+      Serial.println("Client Disconnected.");
+    }
+  }
+}
+
 void direct() {
+
+  // Flood prevention
+  if (millis() - cmdTime < 500) {
+    return;
+  }
+
+  cmdTime = millis();
+  Serial.println(cmd);
+
   if (!strcmp(cmd, "go")) {
     Go();
     return;
@@ -179,6 +204,11 @@ void direct() {
     Function3();
     return;
   }
+
+  if (!strcmp(cmd, "hello")) {
+    HighLight();
+    return;
+  }
 }
 
 /* HANDLE CAR DIRECTION */
@@ -194,7 +224,7 @@ void Go() {
   digitalWrite(IN_A2, LOW);
   digitalWrite(IN_B1, LOW);
   digitalWrite(IN_B2, HIGH);
-  delay(500);
+  delay(200);
 }
 
 void Back() {
@@ -202,7 +232,7 @@ void Back() {
   digitalWrite(IN_A2, HIGH);
   digitalWrite(IN_B1, HIGH);
   digitalWrite(IN_B2, LOW);
-  delay(500);
+  delay(200);
 }
 
 void TurnLeft() {
@@ -222,18 +252,31 @@ void TurnRight() {
 }
 
 /* HANDLE FUNCTIONS */
-void HighLight() {
-  digitalWrite(SIGNAL, LOW);
-  delay(500);
+void Blink(void * parameter) {
+  (void) parameter;
 
-  for (int i = 1; i < 2; i++) {
+  digitalWrite(SIGNAL, LOW);
+  vTaskDelay(250);
+
+  for (int i = 1; i < 3; i++) {
     digitalWrite(SIGNAL, HIGH);
-    delay(1000);
+    vTaskDelay(250);
+
     digitalWrite(SIGNAL, LOW);
-    delay(1000);
+    vTaskDelay(250);
   }
 
-  digitalWrite(SIGNAL, HIGH);
+  vTaskDelete(NULL);
+}
+
+void HighLight() {
+  xTaskCreate(
+    Blink,
+    "Blink",
+    1024,
+    NULL,
+    1,
+    NULL);
 }
 
 void Function1() {
@@ -262,4 +305,20 @@ void Function3() {
   digitalWrite(FUNC_3, HIGH);
   delay(500);
   digitalWrite(FUNC_3, LOW);
+}
+
+void Reset() {
+  digitalWrite(IN_A1, LOW);
+  digitalWrite(IN_A2, LOW);
+  digitalWrite(IN_B1, LOW);
+  digitalWrite(IN_B2, LOW);
+
+  digitalWrite(SIGNAL, LOW);
+  digitalWrite(FUNC_1, LOW);
+  digitalWrite(FUNC_2, LOW);
+  digitalWrite(FUNC_3, LOW);
+  digitalWrite(FUNC_4, LOW);
+
+  cmd[0] = '\0';
+  cmdTime = 0;
 }
