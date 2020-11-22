@@ -1,10 +1,10 @@
 /*
   Author:
-  _____ ___ _____ _   _   ____    _  _____   _   _ _   ___   ___   _ _   _
-|_   _|_ _| ____| \ | | |  _ \  / \|_   _| | | | | | | \ \ / / \ | | | | |
-  | |  | ||  _| |  \| | | | | |/ _ \ | |   | |_| | | | |\ V /|  \| | |_| |
-  | |  | || |___| |\  | | |_| / ___ \| |   |  _  | |_| | | | | |\  |  _  |
-  |_| |___|_____|_| \_| |____/_/   \_\_|   |_| |_|\___/  |_| |_| \_|_| |_|
+   _____ ___ _____ _   _   ____    _  _____   _   _ _   ___   ___   _ _   _
+  |_   _|_ _| ____| \ | | |  _ \  / \|_   _| | | | | | | \ \ / / \ | | | | |
+    | |  | ||  _| |  \| | | | | |/ _ \ | |   | |_| | | | |\ V /|  \| | |_| |
+    | |  | || |___| |\  | | |_| / ___ \| |   |  _  | |_| | | | | |\  |  _  |
+    |_| |___|_____|_| \_| |____/_/   \_\_|   |_| |_|\___/  |_| |_| \_|_| |_|
 
   Date created 19-Nov-2020 13:45
   TCP server power by ESP32
@@ -15,10 +15,10 @@
 /* DECLARATION */
 const int DEBUG = 1;
 
-const char* SSID     = "Slytherin";
-const char* PASSWORD = "9WF^F^ua";
-// const char* SSID     = "Gryffindor";
-// const char* PASSWORD = "XnU3Xz^`";
+//const char* SSID     = "Slytherin";
+//const char* PASSWORD = "9WF^F^ua";
+const char* SSID     = "Gryffindor";
+const char* PASSWORD = "XnU3Xz^`";
 
 //Static IP address configuration
 IPAddress staticIP(192, 168, 1, 100);
@@ -26,7 +26,10 @@ IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress dns(8, 8, 8, 8);
 
-WiFiServer server(80);
+WiFiServer server(8000);
+WiFiClient client;
+char cmd[20];
+byte cmdIndex = 0;
 
 const int IN_A1 = 12;
 const int IN_A2 = 14;
@@ -41,8 +44,7 @@ const int FUNC_4 = 34;
 
 void connet();
 void host();
-void HighLight();
-void direct(char direction);
+void direct();
 
 /* MAIN CODE HERE */
 void setup() {
@@ -61,22 +63,40 @@ void setup() {
   }
 
   connet();
+
+  server.begin();
+//  xTaskCreate(
+//    anotherTask, /* Task function. */
+//    "another Task", /* name of task. */
+//    10000, /* Stack size of task */
+//    NULL, /* parameter of the task */
+//    1, /* priority of the task */
+//    NULL); /* Task handle to keep track of created task */
 }
 
 void loop() {
-  WiFiClient client = server.available();
+  if (!client.connected()) {
+    client = server.available();
+    return;
+  }
 
   if (client) {
     Serial.println("Client connected.");
+    HighLight();
 
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
 
-        direct(c);
+        if (c == '\n') {
+          cmdIndex = 0;
+          direct();
+          client.println("ok");
 
-        Serial.println(c);
-        client.println("ok");
+        } else {
+          cmd[cmdIndex] = c;
+          if (cmdIndex < 18) cmdIndex++;
+        }
       }
     }
 
@@ -122,40 +142,40 @@ void host() {
 /*
   | Character |      Handle      |    Description    |
   |-----------|:-----------------|-------------------|
-  |     w     |       go()       |      Go ahead     |
+  |     go    |       go()       |      Go ahead     |
 */
-void direct(char dir) {
-  if (dir == 'w') {
+void direct() {
+  if (!strcmp(cmd, "go")) {
     Go();
     return;
   }
 
-  if (dir == 's') {
+  if (!strcmp(cmd, "ba")) {
     Back();
     return;
   }
 
-  if (dir == 'a') {
+  if (!strcmp(cmd, "le")) {
     TurnLeft();
     return;
   }
 
-  if (dir == 'd') {
+  if (!strcmp(cmd, "ri")) {
     TurnRight();
     return;
   }
 
-  if (dir == '1') {
+  if (!strcmp(cmd, "f1")) {
     Function1();
     return;
   }
 
-  if (dir == '2') {
+  if (!strcmp(cmd, "f2")) {
     Function2();
     return;
   }
 
-  if (dir == '3') {
+  if (!strcmp(cmd, "f3")) {
     Function3();
     return;
   }
@@ -206,7 +226,7 @@ void HighLight() {
   digitalWrite(SIGNAL, LOW);
   delay(500);
 
-  for (int i = 1; i < 5; i++) {
+  for (int i = 1; i < 2; i++) {
     digitalWrite(SIGNAL, HIGH);
     delay(1000);
     digitalWrite(SIGNAL, LOW);
