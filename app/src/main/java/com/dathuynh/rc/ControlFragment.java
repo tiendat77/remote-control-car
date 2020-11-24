@@ -2,6 +2,7 @@ package com.dathuynh.rc;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -29,6 +30,40 @@ public class ControlFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_control, container, false);
     }
 
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        this.createSocket();
+
+        view.findViewById(R.id.button_top).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand("go");
+            }
+        });
+
+        view.findViewById(R.id.button_bottom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand("ba");
+            }
+        });
+
+        view.findViewById(R.id.button_left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand("le");
+            }
+        });
+
+        view.findViewById(R.id.button_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand("ri");
+            }
+        });
+    }
+
     public void createSocket() {
         if (socketClient == null) {
             socketClient = new SocketClient(new SocketClient.MessageListener() {
@@ -39,12 +74,23 @@ public class ControlFragment extends Fragment {
             });
 
             socketClient.start();
+
         } else {
-            socketClient.send("hello");
+            socketClient.send("bye");
+            socketClient.stop();
+            socketClient = null;
         }
     }
 
+    /* On message received from socket */
     public void onReceiveMessage(String message) {
         Log.d("Socket", message);
+    }
+
+    /* Send message through socket */
+    private void sendCommand(String command) {
+        if (socketClient != null) {
+            socketClient.send(command);
+        }
     }
 }
