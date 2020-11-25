@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/blue_500</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_50</item>
+        <item name="colorSecondary">@color/blue_300</item>
         <item name="colorSecondaryVariant">@color/blue_100</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
@@ -17,6 +17,7 @@
     <style name="Theme.RemoteControlCar.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="Theme.RemoteControlCar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

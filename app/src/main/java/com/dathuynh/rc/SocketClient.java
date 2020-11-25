@@ -7,16 +7,17 @@ import java.net.Socket;
 
 public class SocketClient extends Thread {
 
-    private final MessageListener messageListener;
+    private final SocketEvent socketEvent;
     BufferedReader in;
     PrintWriter out;
 
-    public SocketClient(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public SocketClient(SocketEvent socketEvent) {
+        this.socketEvent = socketEvent;
     }
 
     /**
      * Sends the message entered by client to the server
+     *
      * @param message text entered by client
      */
     public void send(final String message) {
@@ -40,6 +41,9 @@ public class SocketClient extends Thread {
             Socket socket = new Socket(Constants.SERVER_IP, Constants.SERVER_PORT);
 
             Log.d("SocketClient", "Connected!");
+            if (socketEvent != null) {
+                socketEvent.connected();
+            }
 
             try {
                 // receive the message which the server sends back
@@ -51,25 +55,38 @@ public class SocketClient extends Thread {
                 send("Android");
 
                 // in this while the client listens for the messages sent by server
-                while(true) {
+                while (true) {
                     String message = in.readLine();
 
-                    if (message != null && messageListener != null) {
-                        messageListener.messageReceived(message);
+                    if (message != null && socketEvent != null) {
+                        socketEvent.messageReceived(message);
                     }
                 }
 
             } catch (Exception e) {
-                Log.e("SocketClient", "Send Error", e);
                 socket.close();
+
+                Log.e("SocketClient", "Send Error", e);
+                if (socketEvent != null) {
+                    socketEvent.disconnected();
+                }
             }
 
         } catch (Exception e) {
             Log.e("SocketClient", "Connect error!", e);
+            if (socketEvent != null) {
+                socketEvent.connectError();
+            }
         }
     }
 
-    public interface MessageListener {
+    public interface SocketEvent {
         void messageReceived(String message);
+
+        void connected();
+
+        void connectError();
+
+        void disconnected();
     }
 }
