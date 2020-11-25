@@ -41,7 +41,7 @@ public class ControlFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.createSocket();
+//        this.createSocket();
         this.initView(view);
         this.setListener(view);
     }

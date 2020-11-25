@@ -34,10 +34,10 @@ char cmd[20];
 byte cmdIndex = 0;
 unsigned long cmdTime = 0;
 
-const int IN_A1 = 12;
-const int IN_A2 = 14;
-const int IN_B1 = 27;
-const int IN_B2 = 26;
+const int IN_A1 = 17;
+const int IN_A2 = 16;
+const int IN_B1 = 4;
+const int IN_B2 = 0;
 
 const int SIGNAL = 25;
 const int FUNC_1 = 33;

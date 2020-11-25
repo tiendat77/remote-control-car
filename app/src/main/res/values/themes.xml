@@ -23,4 +23,19 @@
     <style name="Theme.RemoteControlCar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.RemoteControlCar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.RemoteControlCar.FAB" parent="Theme.MaterialComponents">
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="hoveredFocusedTranslationZ">0dp</item>
+        <item name="rippleColor">@color/blue_100</item>
+        <item name="pressedTranslationZ">2dp</item>
+        <item name="tint">@color/blue_300</item>
+        <item name="fabCustomSize">80dp</item>
+        <item name="maxImageSize">48dp</item>
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">0dp</item>
+    </style>
 </resources>
