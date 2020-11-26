@@ -38,4 +38,18 @@
         <item name="borderWidth">0dp</item>
         <item name="elevation">0dp</item>
     </style>
+
+    <style name="Theme.RemoteControlCar.FabMini" parent="Theme.MaterialComponents">
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="hoveredFocusedTranslationZ">0dp</item>
+        <item name="rippleColor">@color/blue_100</item>
+        <item name="pressedTranslationZ">2dp</item>
+        <item name="fabCustomSize">30dp</item>
+        <item name="maxImageSize">24dp</item>
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">0dp</item>
+    </style>
 </resources>

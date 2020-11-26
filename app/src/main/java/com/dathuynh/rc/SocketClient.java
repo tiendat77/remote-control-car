@@ -7,11 +7,15 @@ import java.net.Socket;
 
 public class SocketClient extends Thread {
 
+    private final String SERVER_ADDRESS;
+    private final int SERVER_PORT;
     private final SocketEvent socketEvent;
     BufferedReader in;
     PrintWriter out;
 
-    public SocketClient(SocketEvent socketEvent) {
+    public SocketClient(String serverAddress, int serverPort, SocketEvent socketEvent) {
+        this.SERVER_ADDRESS = serverAddress.equals("") ? Constants.SERVER_IP : serverAddress;
+        this.SERVER_PORT = serverPort == 0 ? Constants.SERVER_PORT : serverPort;
         this.socketEvent = socketEvent;
     }
 
@@ -35,10 +39,10 @@ public class SocketClient extends Thread {
 
     public void run() {
         try {
-            Log.d("SocketClient", "Connecting to: " + Constants.SERVER_IP);
+            Log.d("SocketClient", "Connecting to: " + this.SERVER_ADDRESS);
 
             // create a socket to make the connection with the server
-            Socket socket = new Socket(Constants.SERVER_IP, Constants.SERVER_PORT);
+            Socket socket = new Socket(this.SERVER_ADDRESS, this.SERVER_PORT);
 
             Log.d("SocketClient", "Connected!");
             if (socketEvent != null) {

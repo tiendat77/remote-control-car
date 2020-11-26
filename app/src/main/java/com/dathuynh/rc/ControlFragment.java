@@ -1,5 +1,6 @@
 package com.dathuynh.rc;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,8 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.json.JSONObject;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
@@ -19,8 +24,13 @@ public class ControlFragment extends Fragment {
 
     private SocketClient socketClient;
 
-    private TextView connectionStatusText;
+    private Preference preference;
+    private int controlMethod;
 
+    private RelativeLayout controlGamePadLayout;
+    private RelativeLayout controlJoystickLayout;
+    private FloatingActionButton connectionStatusDot;
+    private TextView connectionStatusText;
 
     public ControlFragment() {
         // Required empty public constructor
@@ -29,6 +39,17 @@ public class ControlFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.preference = new Preference(getContext());
+        this.loadSettings();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.setStatus(Constants.NOT_CONNECTED);
+        this.loadSettings();
+        this.setViewBySetting();
     }
 
     @Override
@@ -41,13 +62,17 @@ public class ControlFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        this.createSocket();
         this.initView(view);
+        this.setViewBySetting();
         this.setListener(view);
+        this.setStatus(Constants.NOT_CONNECTED);
     }
 
     private void initView(View view) {
+        controlGamePadLayout = (RelativeLayout) view.findViewById(R.id.control_game_pad);
+        controlJoystickLayout = (RelativeLayout) view.findViewById(R.id.control_joystick);
         connectionStatusText = (TextView) view.findViewById(R.id.connection_status);
+        connectionStatusDot = (FloatingActionButton) view.findViewById(R.id.button_connection_dot);
     }
 
     private void setListener(View view) {
@@ -119,6 +144,13 @@ public class ControlFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.button_connection_dot).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createSocket();
+            }
+        });
+
         view.findViewById(R.id.button_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,6 +183,35 @@ public class ControlFragment extends Fragment {
         }
     }
 
+    /* Set view by user setting */
+    private void setViewBySetting() {
+        if (this.controlMethod == 0) { // show game-pad
+            this.controlJoystickLayout.setVisibility(View.GONE);
+            this.controlGamePadLayout.setVisibility(View.VISIBLE);
+
+        } else { // show joystick
+            this.controlJoystickLayout.setVisibility(View.VISIBLE);
+            this.controlGamePadLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /* Show connection status */
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void setStatus(String status) {
+        if (this.connectionStatusText != null) {
+            this.connectionStatusText.setText(status);
+        }
+
+        /* Connected successfully */
+        if (status.equals(Constants.CONNECTED)) {
+            connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_rocket_24));
+            return;
+        }
+
+        /* Connect error or Not connected yet */
+        connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_setting_24));
+    }
+
     /* Call device API get function status then update button icon */
     private void getFunctionStatus() {
 
@@ -167,11 +228,13 @@ public class ControlFragment extends Fragment {
                 @Override
                 public void connected() {
                     pushNotify("Connected!");
+                    setStatus(Constants.CONNECTED);
                 }
 
                 @Override
                 public void connectError() {
                     pushNotify("Connect error!");
+                    setStatus(Constants.CONNECT_ERROR);
                 }
 
                 @Override
@@ -180,8 +243,10 @@ public class ControlFragment extends Fragment {
                 }
             };
 
-            socketClient = new SocketClient(socketEvent);
+            String serverAddress = preference.getDeviceAddress();
+            int serverPort = preference.getDevicePort();
 
+            socketClient = new SocketClient(serverAddress, serverPort, socketEvent);
             socketClient.start();
 
         } else {
@@ -203,14 +268,21 @@ public class ControlFragment extends Fragment {
         }
     }
 
+    /* Load settings */
+    private void loadSettings() {
+        this.controlMethod = preference.getControlMethod();
+    }
+
     /* Notify message with Toast */
     public void pushNotify(String message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
+        }
     }
 }
