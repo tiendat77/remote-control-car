@@ -32,7 +32,7 @@
         <item name="hoveredFocusedTranslationZ">0dp</item>
         <item name="rippleColor">@color/blue_100</item>
         <item name="pressedTranslationZ">2dp</item>
-        <item name="tint">@color/blue_300</item>
+        <item name="tint">@null</item>
         <item name="fabCustomSize">80dp</item>
         <item name="maxImageSize">48dp</item>
         <item name="borderWidth">0dp</item>
@@ -46,6 +46,7 @@
         <item name="android:scaleType">centerInside</item>
         <item name="hoveredFocusedTranslationZ">0dp</item>
         <item name="rippleColor">@color/blue_100</item>
+        <item name="tint">@null</item>
         <item name="pressedTranslationZ">2dp</item>
         <item name="fabCustomSize">30dp</item>
         <item name="maxImageSize">24dp</item>
