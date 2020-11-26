@@ -39,7 +39,7 @@ public class SocketClient extends Thread {
 
     public void run() {
         try {
-            Log.d("SocketClient", "Connecting to: " + this.SERVER_ADDRESS);
+            Log.d("SocketClient", "Connecting to: " + this.SERVER_ADDRESS + ":" + this.SERVER_PORT);
 
             // create a socket to make the connection with the server
             Socket socket = new Socket(this.SERVER_ADDRESS, this.SERVER_PORT);

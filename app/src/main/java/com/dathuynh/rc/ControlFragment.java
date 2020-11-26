@@ -204,12 +204,12 @@ public class ControlFragment extends Fragment {
 
         /* Connected successfully */
         if (status.equals(Constants.CONNECTED)) {
-            connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_rocket_24));
+            connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_on));
             return;
         }
 
         /* Connect error or Not connected yet */
-        connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_setting_24));
+        connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_off));
     }
 
     /* Call device API get function status then update button icon */
@@ -251,8 +251,6 @@ public class ControlFragment extends Fragment {
 
         } else {
             socketClient.send("bye");
-            socketClient.stop();
-            socketClient = null;
         }
     }
 

@@ -23,7 +23,7 @@
                 android:id="@+id/button_connection_dot"
                 style="@style/Theme.RemoteControlCar.FabMini"
                 android:contentDescription="DOT STATUS"
-                android:src="@drawable/ic_setting_24"
+                android:src="@drawable/ic_light_off"
                 app:tint="@null" />
 
             <TextView
