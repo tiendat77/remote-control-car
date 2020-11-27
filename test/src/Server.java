@@ -17,7 +17,6 @@ public class Server {
     private static ServerSocket serverSocket = null;
 
     // The client socket.
-    private static String clientName = null;
     private static Socket clientSocket = null;
     private static DataInputStream is = null;
     private static PrintStream os = null;
@@ -102,19 +101,19 @@ public class Server {
                 is = new DataInputStream(clientSocket.getInputStream());
                 os = new PrintStream(clientSocket.getOutputStream());
 
-                clientName = GetClientName();
-                if (clientName != null) {
-                  int i = 0;
+                int i = 0;
                   for (i = 0; i < maxThreadsCount; i++) {
                     if (clientThreads[i] == null) {
-                      clientThreads[i] = new ClientThread(clientSocket, clientThreads, clientName, new ClientThread.OnMessageReceived() {
+                      clientThreads[i] = new ClientThread(clientSocket, clientThreads, new ClientThread.OnMessageReceived() {
                         @Override
                         public void messageReceived(String message) {
                             updateTextArea(message);
                         }
                       });
 
-                      updateTextArea("*** " + clientName + " joined.");
+                      clientThreads[i].start();
+                      System.out.println("Client connect" + i);
+
                       break;
                     }
                   }
@@ -130,34 +129,11 @@ public class Server {
                       clientThreads[j] = null;
                     }
                   }
-                }
 
             } catch (IOException e) {
                 System.out.println(e);
                 updateTextArea(e.toString());
             }
         }
-    }
-
-    private static String GetClientName() {
-        try {
-            /* Welcome the new the client. */
-            os.println("Welcome-You are connected");
-            os.println("Enter your name: ");
-
-            String name;
-            while (true) {
-                name = is.readLine().trim();
-                if (!name.equals("")) {
-                    break;
-                }
-            }
-            return name;
-
-        } catch (IOException ex) {
-            System.out.println(ex);
-        }
-
-        return null;
     }
 }

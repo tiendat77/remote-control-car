@@ -8,18 +8,17 @@ public class ClientThread extends Thread {
 
     private String clientName = null;
     private Socket clientSocket = null;
-    private DataInputStream is = null;
-    private PrintStream os = null;
+    private static DataInputStream is = null;
+    private static PrintStream os = null;
 
     private int maxClientsCount;
     private final ClientThread[] threads;
     private OnMessageReceived messageListener;
 
-    public ClientThread(Socket clientSocket, ClientThread[] threads, String clientName, OnMessageReceived messageListener) {
+    public ClientThread(Socket clientSocket, ClientThread[] threads, OnMessageReceived messageListener) {
         this.clientSocket = clientSocket;
         this.threads = threads;
         this.maxClientsCount = threads.length;
-        this.clientName = clientName;
         this.messageListener = messageListener;
     }
 
@@ -33,6 +32,21 @@ public class ClientThread extends Thread {
              */
             is = new DataInputStream(clientSocket.getInputStream());
             os = new PrintStream(clientSocket.getOutputStream());
+
+            /* Welcome the new the client. */
+            os.println("Welcome-You are connected");
+            os.println("Enter your name: ");
+
+            String name;
+            while (true) {
+                name = is.readLine().trim();
+                if (!name.equals("")) {
+                    break;
+                }
+            }
+
+            this.clientName = name;
+            messageListener.messageReceived("*** " + clientName + " joined");
 
             /* Start the conversation. */
             while (true) {
