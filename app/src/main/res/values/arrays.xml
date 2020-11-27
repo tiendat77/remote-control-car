@@ -1,0 +1,12 @@
+<resources>
+    <!--  Control Preference  -->
+    <string-array name="control_entries">
+        <item>Game pad</item>
+        <item>Joystick</item>
+    </string-array>
+
+    <string-array name="control_values">
+        <item>game_pad</item>
+        <item>joystick</item>
+    </string-array>
+</resources>
