@@ -1,6 +1,8 @@
-package com.dathuynh.rc;
+package com.dathuynh.rc.utils;
 
 import android.util.Log;
+
+import com.dathuynh.rc.Constants;
 
 import java.io.*;
 import java.net.Socket;
@@ -25,14 +27,17 @@ public class SocketClient extends Thread {
      * @param message text entered by client
      */
     public void send(final String message) {
-        new Thread(() -> {
-            try {
-                if (out != null) {
-                    out.println(message);
-                }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (out != null) {
+                        out.println(message);
+                    }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
@@ -70,7 +75,6 @@ public class SocketClient extends Thread {
             } catch (Exception e) {
                 socket.close();
 
-                Log.e("SocketClient", "Send Error", e);
                 if (socketEvent != null) {
                     socketEvent.disconnected();
                 }

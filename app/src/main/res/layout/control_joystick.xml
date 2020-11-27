@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/control_joystick"
-    android:visibility="gone"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/control_layout_joystick"
     android:layout_width="200dp"
     android:layout_height="200dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:visibility="gone">
 
-    <io.github.controlwear.virtual.joystick.android.JoystickView
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/joystick"
+    <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/control_joystick"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/ic_joystick_bg"
+        custom:JV_buttonImage="@drawable/ic_joystick_ball"
         custom:JV_fixedCenter="false" />
 
 </RelativeLayout>

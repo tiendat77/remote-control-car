@@ -3,10 +3,22 @@
     <string-array name="control_entries">
         <item>Game pad</item>
         <item>Joystick</item>
+        <item>Tilt to turn</item>
     </string-array>
 
     <string-array name="control_values">
         <item>game_pad</item>
         <item>joystick</item>
+        <item>accelerometer</item>
+    </string-array>
+
+    <string-array name="control_pos_entries">
+        <item>Left</item>
+        <item>Right</item>
+    </string-array>
+
+    <string-array name="control_pos_values">
+        <item>left</item>
+        <item>right</item>
     </string-array>
 </resources>

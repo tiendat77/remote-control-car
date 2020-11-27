@@ -28,6 +28,14 @@
             app:title="@string/control_layout"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:defaultValue="right"
+            app:entries="@array/control_pos_entries"
+            app:entryValues="@array/control_pos_values"
+            app:key="control_position"
+            app:title="@string/control_position"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

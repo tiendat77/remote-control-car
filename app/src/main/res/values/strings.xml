@@ -13,4 +13,5 @@
 
     <!--  Control Preference  -->
     <string name="control_layout">Control layout</string>
+    <string name="control_position">Control direction position</string>
 </resources>
