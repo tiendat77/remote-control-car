@@ -1,5 +1,6 @@
 package com.dathuynh.rc.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,6 +18,9 @@ public class FunctionControl extends RelativeLayout {
     private FloatingActionButton circleButton;
     private FloatingActionButton crossesButton;
     private FloatingActionButton squareButton;
+
+    public static final int CLASSIC = 0;
+    public static final int GAME_PAD = 1;
 
     public FunctionControl(Context context) {
         super(context);
@@ -79,6 +83,44 @@ public class FunctionControl extends RelativeLayout {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void setGamePadTheme() {
+        if (triangleButton != null) {
+            triangleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_triangle));
+        }
+
+        if (circleButton != null) {
+            circleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_circle));
+        }
+
+        if (crossesButton != null) {
+            crossesButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_crosses));
+        }
+
+        if (squareButton != null) {
+            squareButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_square));
+        }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void setClassicTheme() {
+        if (triangleButton != null) {
+            triangleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_triangle_lighting));
+        }
+
+        if (circleButton != null) {
+            circleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_circle_signal_right));
+        }
+
+        if (crossesButton != null) {
+            crossesButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_crosses_bell));
+        }
+
+        if (squareButton != null) {
+            squareButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_square_signal_left));
+        }
+    }
+
     private void onCommand(String command) {
         if (onCommandListener != null) {
             onCommandListener.onCommand(command);
@@ -91,6 +133,17 @@ public class FunctionControl extends RelativeLayout {
 
     public void show() {
         this.setVisibility(View.VISIBLE);
+    }
+
+    public void setTheme(int THEME) {
+        if (THEME == CLASSIC) {
+            setClassicTheme();
+            return;
+        }
+
+        if (THEME == GAME_PAD) {
+            setGamePadTheme();
+        }
     }
 
     public void setOnCommandListener(OnCommandListener onCommandListener) {

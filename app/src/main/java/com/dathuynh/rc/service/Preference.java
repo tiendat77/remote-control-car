@@ -18,6 +18,9 @@ public class Preference {
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
 
+    public static final int THEME_CLASSIC = 0;
+    public static final int THEME_GAME_PAD = 1;
+
     public Preference(Context context) {
         this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -65,5 +68,15 @@ public class Preference {
         }
 
         return LEFT;
+    }
+
+    public int getFunctionsTheme() {
+        String THEME = preferences.getString("control_function_theme", "classic");
+
+        if (THEME.equals("classic")) {
+            return THEME_CLASSIC;
+        }
+
+        return THEME_GAME_PAD;
     }
 }

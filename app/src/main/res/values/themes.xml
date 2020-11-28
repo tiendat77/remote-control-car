@@ -58,4 +58,8 @@
         <item name="borderWidth">0dp</item>
         <item name="elevation">0dp</item>
     </style>
+
+    <style name="Theme.RemoteControlCar.Splash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_formula</item>
+    </style>
 </resources>

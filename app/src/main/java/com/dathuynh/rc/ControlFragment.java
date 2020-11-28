@@ -24,7 +24,6 @@ import com.dathuynh.rc.socket.SocketClient;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-
 public class ControlFragment extends Fragment {
 
     private SocketClient socketClient;
@@ -179,6 +178,10 @@ public class ControlFragment extends Fragment {
         /* Control direction position: on left-hand or right-hand */
         int controlPosition = preference.getControlPosition();
         setControlPosition(controlPosition);
+
+        /* Functions control theme */
+        int functionsTheme = preference.getFunctionsTheme();
+        setControlFunctionTheme(functionsTheme);
     }
 
     /* Set view by user setting */
@@ -232,6 +235,12 @@ public class ControlFragment extends Fragment {
         }
     }
 
+    private void setControlFunctionTheme(int theme) {
+        if (functionControl != null) {
+            functionControl.setTheme(theme);
+        }
+    }
+
     /**
      * Socket Client
      */
@@ -253,11 +262,6 @@ public class ControlFragment extends Fragment {
         /* Connect error or Not connected yet or Connection closed */
         connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_off));
         socketClient = null;
-    }
-
-    /* Call device API get function status then update button icon */
-    private void getFunctionStatus() {
-
     }
 
     private void createSocket() {
@@ -306,7 +310,7 @@ public class ControlFragment extends Fragment {
     /* On message received from socket */
     @SuppressLint("SetTextI18n")
     public void onReceiveMessage(String message) {
-        if (serverResponseText != null) {
+        if (serverResponseText != null && message != null) {
             serverResponseText.setText("Res: " + message);
         }
     }
@@ -314,6 +318,7 @@ public class ControlFragment extends Fragment {
     /* Send message through socket */
     private void sendCommand(String command) {
         controlStatusText.setText(command);
+
         if (socketClient != null && command != null) {
             socketClient.send(command);
         }

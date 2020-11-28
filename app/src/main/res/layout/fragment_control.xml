@@ -9,54 +9,75 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="20dp">
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="20dp">
 
         <LinearLayout
-            android:id="@+id/connection_area"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center">
+            android:orientation="vertical">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/button_connection_dot"
-                style="@style/Theme.RemoteControlCar.FabMini"
-                android:contentDescription="DOT STATUS"
-                android:src="@drawable/ic_light_off" />
-
-            <TextView
-                android:id="@+id/connection_status"
+            <!-- Connection and Settings -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/connection_area"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center">
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/button_connection_dot"
+                        style="@style/Theme.RemoteControlCar.FabMini"
+                        android:contentDescription="DOT STATUS"
+                        android:src="@drawable/ic_light_off" />
+
+                    <TextView
+                        android:id="@+id/connection_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical" />
+                </LinearLayout>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/button_settings"
+                    style="@style/Theme.RemoteControlCar.FabMini"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="SETTINGS"
+                    android:src="@drawable/ic_setting_24" />
+
+            </RelativeLayout>
+
+            <!-- Status texts -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:id="@+id/control_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="12dp"
+                    android:textColor="#B1B1B1" />
+
+                <TextView
+                    android:id="@+id/server_response"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="12dp"
+                    android:textColor="#B1B1B1" />
+
+            </RelativeLayout>
+
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_settings"
-            style="@style/Theme.RemoteControlCar.FabMini"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="SETTINGS"
-            android:src="@drawable/ic_setting_24" />
-
-        <TextView
-            android:id="@+id/control_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/button_settings"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="6dp" />
-
-        <TextView
-            android:id="@+id/server_response"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/connection_area"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="6dp" />
-
+        <!-- Control Direction -->
         <RelativeLayout
             android:id="@+id/control_direction_wrapper"
             android:layout_width="@dimen/control_block"
@@ -81,6 +102,7 @@
 
         </RelativeLayout>
 
+        <!-- Control Functions -->
         <RelativeLayout
             android:id="@+id/control_function_wrapper"
             android:layout_width="wrap_content"
@@ -97,6 +119,7 @@
 
     </RelativeLayout>
 
+    <!-- Loader Overlay -->
     <include
         layout="@layout/ui_loader"
         android:layout_width="match_parent"

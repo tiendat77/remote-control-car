@@ -8,8 +8,6 @@
         style="@style/Theme.RemoteControlCar.GamePadButton"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        app:borderWidth="1dp"
-        
         android:contentDescription="Function 1"
         android:src="@drawable/ic_triangle" />
 
