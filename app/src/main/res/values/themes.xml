@@ -20,11 +20,16 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="Theme.RemoteControlCar.Settings">
+        <item name="windowActionBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="Theme.RemoteControlCar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.RemoteControlCar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Theme.RemoteControlCar.FAB" parent="Theme.MaterialComponents">
+    <style name="Theme.RemoteControlCar.GamePadButton" parent="Theme.MaterialComponents">
         <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -52,5 +57,9 @@
         <item name="maxImageSize">24dp</item>
         <item name="borderWidth">0dp</item>
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Theme.RemoteControlCar.Splash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_formula</item>
     </style>
 </resources>

@@ -12,5 +12,7 @@
     <string name="device_port">Port</string>
 
     <!--  Control Preference  -->
-    <string name="control_layout">Control layout</string>
+    <string name="control_layout">Control</string>
+    <string name="control_position">Direction position</string>
+    <string name="control_func_theme">Theme</string>
 </resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/Theme.RemoteControlCar.GamePadButton"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="UP"
+        android:src="@drawable/ic_direct_up" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/Theme.RemoteControlCar.GamePadButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="DOWN"
+        android:src="@drawable/ic_direct_down" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/Theme.RemoteControlCar.GamePadButton"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="LEFT"
+        android:src="@drawable/ic_direct_left" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="@style/Theme.RemoteControlCar.GamePadButton"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="RIGHT"
+        android:src="@drawable/ic_direct_right" />
+
+</merge>

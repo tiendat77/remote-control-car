@@ -1,6 +1,8 @@
-package com.dathuynh.rc;
+package com.dathuynh.rc.socket;
 
 import android.util.Log;
+
+import com.dathuynh.rc.Constants;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,6 +12,8 @@ public class SocketClient extends Thread {
     private final String SERVER_ADDRESS;
     private final int SERVER_PORT;
     private final SocketEvent socketEvent;
+
+    private Socket socket;
     BufferedReader in;
     PrintWriter out;
 
@@ -25,16 +29,32 @@ public class SocketClient extends Thread {
      * @param message text entered by client
      */
     public void send(final String message) {
-        new Thread(() -> {
-            try {
-                if (out != null) {
-                    out.println(message);
-                }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (out != null) {
+                        out.println(message);
+                    }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
+    }
+
+    public void disconnect() {
+        try {
+            socket.close();
+
+            if (socketEvent != null) {
+                socketEvent.disconnected();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
@@ -42,7 +62,7 @@ public class SocketClient extends Thread {
             Log.d("SocketClient", "Connecting to: " + this.SERVER_ADDRESS + ":" + this.SERVER_PORT);
 
             // create a socket to make the connection with the server
-            Socket socket = new Socket(this.SERVER_ADDRESS, this.SERVER_PORT);
+            socket = new Socket(this.SERVER_ADDRESS, this.SERVER_PORT);
 
             Log.d("SocketClient", "Connected!");
             if (socketEvent != null) {
@@ -70,7 +90,6 @@ public class SocketClient extends Thread {
             } catch (Exception e) {
                 socket.close();
 
-                Log.e("SocketClient", "Send Error", e);
                 if (socketEvent != null) {
                     socketEvent.disconnected();
                 }
