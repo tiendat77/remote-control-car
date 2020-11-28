@@ -1,23 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/device_pref_header">
-
-        <EditTextPreference
-            app:defaultValue="192.168.1.100"
-            app:key="device_ip"
-            app:title="@string/device_ip"
-            app:useSimpleSummaryProvider="true" />
-
-        <EditTextPreference
-            android:inputType="number"
-            app:defaultValue="8000"
-            app:key="device_port"
-            app:title="@string/device_port"
-            app:useSimpleSummaryProvider="true" />
-
-    </PreferenceCategory>
-
     <PreferenceCategory app:title="@string/control_pref_header">
 
         <ListPreference
@@ -34,6 +17,31 @@
             app:entryValues="@array/control_pos_values"
             app:key="control_position"
             app:title="@string/control_position"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="game_pad"
+            app:entries="@array/control_func_theme_entries"
+            app:entryValues="@array/control_func_theme_values"
+            app:key="control_function_theme"
+            android:title="@string/control_func_theme"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/device_pref_header">
+
+        <EditTextPreference
+            app:defaultValue="192.168.1.100"
+            app:key="device_ip"
+            app:title="@string/device_ip"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:inputType="number"
+            app:defaultValue="8000"
+            app:key="device_port"
+            app:title="@string/device_port"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>

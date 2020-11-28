@@ -1,4 +1,4 @@
-package com.dathuynh.rc.utils;
+package com.dathuynh.rc.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;

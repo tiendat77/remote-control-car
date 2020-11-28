@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         hideSystemNavigation();
         hideSystemUI();
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.activity_settings);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

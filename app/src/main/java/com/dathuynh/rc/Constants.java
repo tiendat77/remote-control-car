@@ -7,6 +7,7 @@ public class Constants {
     public static final String CONNECTED = "Connected";
     public static final String CONNECT_ERROR = "Connect error";
     public static final String NOT_CONNECTED = "Not connected";
+    public static final String DISCONNECTED = "Disconnected";
 
     public static final String CONTROL_GAME_PAD = "game_pad";
     public static final String CONTROL_JOYSTICK = "joystick";

@@ -12,15 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.dathuynh.rc.controller.AccelerometerControl;
-import com.dathuynh.rc.controller.FunctionControl;
-import com.dathuynh.rc.controller.GamePadControl;
-import com.dathuynh.rc.controller.JoystickControl;
-import com.dathuynh.rc.controller.LoaderControl;
-import com.dathuynh.rc.utils.Preference;
-import com.dathuynh.rc.utils.SocketClient;
+import com.dathuynh.rc.ui.AccelerometerControl;
+import com.dathuynh.rc.ui.GamePadControl;
+import com.dathuynh.rc.ui.JoystickControl;
+import com.dathuynh.rc.ui.FunctionControl;
+import com.dathuynh.rc.service.Loader;
+import com.dathuynh.rc.service.Notify;
+import com.dathuynh.rc.service.Preference;
+import com.dathuynh.rc.socket.SocketClient;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
@@ -28,14 +29,16 @@ public class ControlFragment extends Fragment {
 
     private SocketClient socketClient;
 
-    private Preference preference;
+    /* Util Services */
+    private Preference preference; // Preferences management
+    private Notify notify; // Notify message with Toast
+    private Loader loader;
 
     /* Controller */
-    private JoystickControl joystickControl;
-    private GamePadControl gamePadControl;
-    private AccelerometerControl accelerometerControl;
-    private FunctionControl functionControl;
-    private LoaderControl loaderControl;
+    private JoystickControl joystickControl; // Direction control
+    private GamePadControl gamePadControl; // Direction control
+    private AccelerometerControl accelerometerControl; // Direction control
+    private FunctionControl functionControl; // Function control
 
     private RelativeLayout directionLayoutContainer;
     private RelativeLayout functionLayoutContainer;
@@ -54,37 +57,52 @@ public class ControlFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.preference = new Preference(getContext());
+        this.initServices();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        this.loadSettings();
-        this.setStatus(Constants.NOT_CONNECTED);
+        closeSocket();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_control, container, false);
+        View root = inflater.inflate(R.layout.fragment_control, container, false);
+
+        this.initUIRef(root);
+        this.setListener(root);
+
+        return root;
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.initView(view);
-        this.initController(view);
-
         this.loadSettings();
-
-        this.setListener(view);
-        this.setStatus(Constants.NOT_CONNECTED);
+        this.setConnectionStatus(Constants.NOT_CONNECTED);
     }
 
-    private void initView(View view) {
+    /**
+     * Initialize Views and Event listeners
+     */
+    private void initServices() {
+        preference = new Preference(getContext());
+        notify = new Notify(getActivity(), getContext());
+        loader = new Loader(getActivity());
+    }
+
+    private void initUIRef(View view) {
+        loader.setView(view.findViewById(R.id.loader_wrapper));
+
+        functionControl = (FunctionControl) view.findViewById(R.id.control_function);
+        gamePadControl = (GamePadControl) view.findViewById(R.id.control_game_pad);
+        joystickControl = (JoystickControl) view.findViewById(R.id.control_joystick);
+        accelerometerControl = (AccelerometerControl) view.findViewById(R.id.control_accelerometer);
+
         controlStatusText = (TextView) view.findViewById(R.id.control_status);
         connectionStatusText = (TextView) view.findViewById(R.id.connection_status);
         serverResponseText = (TextView) view.findViewById(R.id.server_response);
@@ -94,39 +112,45 @@ public class ControlFragment extends Fragment {
         functionLayoutContainer = (RelativeLayout) view.findViewById(R.id.control_function_wrapper);
     }
 
-    private void initController(View view) {
-        loaderControl = new LoaderControl(getActivity(), view);
-
-        joystickControl = new JoystickControl(view, new JoystickControl.OnMoveListener() {
-            @Override
-            public void onMove(String command) {
-                sendCommand(command);
-            }
-        });
-
-        gamePadControl = new GamePadControl(view, new GamePadControl.OnMoveListener() {
-            @Override
-            public void onMove(String command) {
-                sendCommand(command);
-            }
-        });
-
-        this.accelerometerControl = new AccelerometerControl(view, new AccelerometerControl.OnMoveListener() {
-            @Override
-            public void onMove(String command) {
-                sendCommand(command);
-            }
-        });
-
-        functionControl = new FunctionControl(view, new FunctionControl.OnClickListener() {
-            @Override
-            public void onClick(String command) {
-                sendCommand(command);
-            }
-        });
-    }
-
     private void setListener(View view) {
+        /* Controller */
+        if (functionControl != null) {
+            functionControl.setOnCommandListener(new FunctionControl.OnCommandListener() {
+                @Override
+                public void onCommand(String command) {
+                    sendCommand(command);
+                }
+            });
+        }
+
+        if (gamePadControl != null) {
+            gamePadControl.setOnCommandListener(new GamePadControl.OnCommandListener() {
+                @Override
+                public void onCommand(String command) {
+                    sendCommand(command);
+                }
+            });
+        }
+
+        if (joystickControl != null) {
+            joystickControl.setOnCommandListener(new JoystickControl.OnCommandListener() {
+                @Override
+                public void onCommand(String command) {
+                    sendCommand(command);
+                }
+            });
+        }
+
+        if (accelerometerControl != null) {
+            accelerometerControl.setOnCommandListener(new AccelerometerControl.OnCommandListener() {
+                @Override
+                public void onCommand(String command) {
+                    sendCommand(command);
+                }
+            });
+        }
+
+        /* Connection */
         view.findViewById(R.id.button_connection_dot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,28 +167,41 @@ public class ControlFragment extends Fragment {
         });
     }
 
+    /**
+     * Config View by user settings
+     */
+    /* Load user settings */
+    private void loadSettings() {
+        /* Control direction method: by game-pad, by joystick, by accelerometer */
+        int controlMethod = preference.getControlMethod();
+        setControlVisibility(controlMethod);
+
+        /* Control direction position: on left-hand or right-hand */
+        int controlPosition = preference.getControlPosition();
+        setControlPosition(controlPosition);
+    }
+
     /* Set view by user setting */
     private void setControlVisibility(int controlMethod) {
         if (controlMethod == Preference.GAME_PAD) { // show game-pad
-            joystickControl.hideJoystick();
-            accelerometerControl.hideAccelerometer();
-            gamePadControl.showGamePad();
+            joystickControl.hide();
+            accelerometerControl.hide();
+            gamePadControl.show();
             return;
         }
 
-        if (controlMethod == Preference.JOYSTICK){ // show joystick
-            gamePadControl.hideGamePad();
-            accelerometerControl.hideAccelerometer();
-            joystickControl.showJoystick();
+        if (controlMethod == Preference.JOYSTICK) { // show joystick
+            gamePadControl.hide();
+            accelerometerControl.hide();
+            joystickControl.show();
             return;
         }
 
         if (controlMethod == Preference.ACCELEROMETER) { // show accelerometer
-            // TODO: accelerometer control
-            joystickControl.hideJoystick();
-            accelerometerControl.hideAccelerometer();
-            gamePadControl.showGamePad();
-            pushNotify("Accelerometer feature is not supported yet :(");
+            joystickControl.hide();
+            gamePadControl.hide();
+            accelerometerControl.show();
+            notify.pushNotify("Accelerometer feature is not supported yet :(");
         }
     }
 
@@ -195,12 +232,17 @@ public class ControlFragment extends Fragment {
         }
     }
 
+    /**
+     * Socket Client
+     */
     /* Show connection status */
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void setStatus(String status) {
-        if (this.connectionStatusText != null) {
-            this.connectionStatusText.setText(status);
+    private void setConnectionStatus(String status) {
+        if (connectionStatusText != null) {
+            connectionStatusText.setText(status);
         }
+
+        notify.pushNotify(status);
 
         /* Connected successfully */
         if (status.equals(Constants.CONNECTED)) {
@@ -208,8 +250,9 @@ public class ControlFragment extends Fragment {
             return;
         }
 
-        /* Connect error or Not connected yet */
+        /* Connect error or Not connected yet or Connection closed */
         connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_off));
+        socketClient = null;
     }
 
     /* Call device API get function status then update button icon */
@@ -219,7 +262,7 @@ public class ControlFragment extends Fragment {
 
     private void createSocket() {
         if (socketClient == null) {
-            loaderControl.showLoading();
+            loader.show();
 
             SocketClient.SocketEvent socketEvent = new SocketClient.SocketEvent() {
                 @Override
@@ -229,22 +272,19 @@ public class ControlFragment extends Fragment {
 
                 @Override
                 public void connected() {
-                    pushNotify("Connected!");
-                    setStatus(Constants.CONNECTED);
-                    loaderControl.dismissLoading();
+                    setConnectionStatus(Constants.CONNECTED);
+                    loader.dismiss();
                 }
 
                 @Override
                 public void connectError() {
-                    pushNotify("Connect error!");
-                    setStatus(Constants.CONNECT_ERROR);
-                    socketClient = null;
-                    loaderControl.dismissLoading();
+                    setConnectionStatus(Constants.CONNECT_ERROR);
+                    loader.dismiss();
                 }
 
                 @Override
                 public void disconnected() {
-                    pushNotify("Disconnected!");
+                    setConnectionStatus(Constants.DISCONNECTED);
                 }
             };
 
@@ -253,7 +293,13 @@ public class ControlFragment extends Fragment {
 
             socketClient = new SocketClient(serverAddress, serverPort, socketEvent);
             socketClient.start();
+        }
+    }
 
+    private void closeSocket() {
+        if (socketClient != null) {
+            socketClient.disconnect();
+            socketClient = null;
         }
     }
 
@@ -267,32 +313,10 @@ public class ControlFragment extends Fragment {
 
     /* Send message through socket */
     private void sendCommand(String command) {
-        if (socketClient != null) {
+        controlStatusText.setText(command);
+        if (socketClient != null && command != null) {
             socketClient.send(command);
-            controlStatusText.setText(command);
         }
     }
 
-    /* Load settings */
-    private void loadSettings() {
-        /* load control direction method: by game-pad, by joystick, by accelerometer */
-        int controlMethod = preference.getControlMethod();
-        setControlVisibility(controlMethod);
-
-        int controlPosition = preference.getControlPosition();
-        setControlPosition(controlPosition);
-    }
-
-    /* Notify message with Toast */
-    public void pushNotify(String message) {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            });
-        }
-    }
 }

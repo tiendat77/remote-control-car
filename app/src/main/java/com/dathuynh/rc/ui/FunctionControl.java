@@ -1,5 +1,7 @@
-package com.dathuynh.rc.controller;
+package com.dathuynh.rc.ui;
 
+import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -7,30 +9,36 @@ import com.dathuynh.rc.Constants;
 import com.dathuynh.rc.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class FunctionControl {
+public class FunctionControl extends RelativeLayout {
 
-    private final View view;
-    private final OnClickListener onClickListener;
+    private OnCommandListener onCommandListener;
 
-    private RelativeLayout layoutContainer;
     private FloatingActionButton triangleButton;
     private FloatingActionButton circleButton;
     private FloatingActionButton crossesButton;
     private FloatingActionButton squareButton;
 
-    public FunctionControl(View view, OnClickListener onClickListener) {
-        this.view = view;
-        this.onClickListener = onClickListener;
+    public FunctionControl(Context context) {
+        super(context);
+        init(context);
+    }
+
+    public FunctionControl(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
+        inflate(context, R.layout.ui_function_control, this);
         setUIRef();
         setListener();
     }
 
     private void setUIRef() {
-        layoutContainer = view.findViewById(R.id.control_layout_function);
-        triangleButton = view.findViewById(R.id.control_button_function1);
-        circleButton = view.findViewById(R.id.control_button_function2);
-        crossesButton = view.findViewById(R.id.control_button_function3);
-        squareButton = view.findViewById(R.id.control_button_function4);
+        triangleButton = (FloatingActionButton) getChildAt(0);
+        circleButton = (FloatingActionButton) getChildAt(1);
+        crossesButton = (FloatingActionButton) getChildAt(2);
+        squareButton = (FloatingActionButton) getChildAt(3);
     }
 
     private void setListener() {
@@ -38,7 +46,7 @@ public class FunctionControl {
             triangleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onActionClick(Constants.CMD_TRIANGLE);
+                    onCommand(Constants.CMD_TRIANGLE);
                 }
             });
         }
@@ -47,7 +55,7 @@ public class FunctionControl {
             circleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onActionClick(Constants.CMD_CIRCLE);
+                    onCommand(Constants.CMD_CIRCLE);
                 }
             });
         }
@@ -56,7 +64,7 @@ public class FunctionControl {
             crossesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onActionClick(Constants.CMD_CROSSES);
+                    onCommand(Constants.CMD_CROSSES);
                 }
             });
         }
@@ -65,31 +73,32 @@ public class FunctionControl {
             squareButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onActionClick(Constants.CMD_SQUARE);
+                    onCommand(Constants.CMD_SQUARE);
                 }
             });
         }
     }
 
-    private void hideFunctionPad() {
-        if (layoutContainer != null) {
-            layoutContainer.setVisibility(View.GONE);
+    private void onCommand(String command) {
+        if (onCommandListener != null) {
+            onCommandListener.onCommand(command);
         }
     }
 
-    private void showFunctionPad() {
-        if (layoutContainer != null) {
-            layoutContainer.setVisibility(View.VISIBLE);
-        }
+    public void hide() {
+        this.setVisibility(View.GONE);
     }
 
-    private void onActionClick(String command) {
-        if (onClickListener != null) {
-            onClickListener.onClick(command);
-        }
+    public void show() {
+        this.setVisibility(View.VISIBLE);
     }
 
-    public interface OnClickListener {
-        void onClick(String command);
+    public void setOnCommandListener(OnCommandListener onCommandListener) {
+        this.onCommandListener = onCommandListener;
     }
+
+    public interface OnCommandListener {
+        void onCommand(String command);
+    }
+
 }

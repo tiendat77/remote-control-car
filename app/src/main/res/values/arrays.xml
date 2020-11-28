@@ -21,4 +21,14 @@
         <item>left</item>
         <item>right</item>
     </string-array>
+
+    <string-array name="control_func_theme_entries">
+        <item>Classic</item>
+        <item>Game Pad</item>
+    </string-array>
+
+    <string-array name="control_func_theme_values">
+        <item>classic</item>
+        <item>game_pad</item>
+    </string-array>
 </resources>
