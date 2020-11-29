@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Controller</string>
+    <string name="app_name">Car Controller</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
@@ -13,6 +13,6 @@
 
     <!--  Control Preference  -->
     <string name="control_layout">Control</string>
-    <string name="control_position">Direction position</string>
     <string name="control_func_theme">Theme</string>
+    <string name="control_position">Position</string>
 </resources>

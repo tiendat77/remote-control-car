@@ -50,8 +50,6 @@ public class ClientThread extends Thread {
               try {
                 String line = is.readLine();
 
-                System.out.println("Line: " + line);
-
                 /* Client quit the conversation by cmd /quit */
                 if (line.startsWith("/quit")) {
                     break;

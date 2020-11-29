@@ -24,7 +24,7 @@
 
     <string-array name="control_func_theme_entries">
         <item>Classic</item>
-        <item>Game Pad</item>
+        <item>Game pad</item>
     </string-array>
 
     <string-array name="control_func_theme_values">
