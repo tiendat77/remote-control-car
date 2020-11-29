@@ -63,7 +63,16 @@ public class ControlFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        closeSocket();
+        // closeSocket();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (accelerometerControl != null) {
+            accelerometerControl.unregister();
+        }
     }
 
     @Override
@@ -141,6 +150,8 @@ public class ControlFragment extends Fragment {
         }
 
         if (accelerometerControl != null) {
+            accelerometerControl.setActivity(getActivity());
+
             accelerometerControl.setOnCommandListener(new AccelerometerControl.OnCommandListener() {
                 @Override
                 public void onCommand(String command) {
@@ -204,7 +215,6 @@ public class ControlFragment extends Fragment {
             joystickControl.hide();
             gamePadControl.hide();
             accelerometerControl.show();
-            notify.pushNotify("Accelerometer feature is not supported yet :(");
         }
     }
 
@@ -298,6 +308,10 @@ public class ControlFragment extends Fragment {
 
             socketClient = new SocketClient(serverAddress, serverPort, socketEvent);
             socketClient.start();
+        } else {
+            /* Huh? */
+            updateControlText("");
+            updateResponseText("");
         }
     }
 
