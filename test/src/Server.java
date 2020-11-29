@@ -22,8 +22,8 @@ public class Server {
     private static PrintStream os = null;
 
     // The user thread
-    private static final int maxThreadsCount = 10;
-    private static final ClientThread[] clientThreads = new ClientThread[maxThreadsCount];
+    private static final int maxThread = 10;
+    private static final ClientThread[] clientThreads = new ClientThread[maxThread];
 
     public static JTextArea textArea;
 
@@ -54,6 +54,14 @@ public class Server {
                 textArea.append("\n");
             }
         });
+    }
+
+    public static void clientDisconnect(ClientThread thread) {
+      for (int i = 0; i < maxThread; i++) {
+        if (clientThreads[i] == thread) {
+          clientThreads[i] = null;
+        }
+      }
     }
 
     /* ******************************************************** */
@@ -98,37 +106,40 @@ public class Server {
         while (true) {
             try {
                 clientSocket = serverSocket.accept();
-                is = new DataInputStream(clientSocket.getInputStream());
                 os = new PrintStream(clientSocket.getOutputStream());
 
                 int i = 0;
-                  for (i = 0; i < maxThreadsCount; i++) {
-                    if (clientThreads[i] == null) {
-                      clientThreads[i] = new ClientThread(clientSocket, clientThreads, new ClientThread.OnMessageReceived() {
-                        @Override
-                        public void messageReceived(String message) {
-                            updateTextArea(message);
-                        }
-                      });
+                for (i = 0; i < maxThread; i++) {
+                  if (clientThreads[i] == null) {
+                    (clientThreads[i] = new ClientThread(clientSocket, new ClientThread.OnMessageReceived() {
+                      @Override
+                      public void messageReceived(String message) {
+                          updateTextArea(message);
+                      }
 
-                      clientThreads[i].start();
-                      System.out.println("Client connect" + i);
+                      @Override
+                      public void disconnected(ClientThread thread) {
+                        clientDisconnect(thread);
+                      }
+                    })).start();
 
-                      break;
-                    }
+                    System.out.println("Client " + i + " connected..");
+                    break;
                   }
+                }
 
-                  // Clean up threads
-                  if (i == maxThreadsCount) {
-                    os.println("Server too busy. Try later.");
-                    os.close();
-                    clientSocket.close();
+                // Clean up threads
+                if (i == maxThread) {
+                  os.println("Server too busy. Try later.");
+                  os.close();
+                  System.out.println("Reach the maximnum thread");
+                  clientSocket.close();
 
-                    for (int j = 0; j < maxThreadsCount; j++) {
-                      clientThreads[j].stop();
-                      clientThreads[j] = null;
-                    }
+                  for (int j = 0; j < maxThread; j++) {
+                    clientThreads[j].stop();
+                    clientThreads[j] = null;
                   }
+                }
 
             } catch (IOException e) {
                 System.out.println(e);

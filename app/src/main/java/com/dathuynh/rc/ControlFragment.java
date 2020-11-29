@@ -63,7 +63,16 @@ public class ControlFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        closeSocket();
+        // closeSocket();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (accelerometerControl != null) {
+            accelerometerControl.unregister();
+        }
     }
 
     @Override
@@ -141,6 +150,8 @@ public class ControlFragment extends Fragment {
         }
 
         if (accelerometerControl != null) {
+            accelerometerControl.setActivity(getActivity());
+
             accelerometerControl.setOnCommandListener(new AccelerometerControl.OnCommandListener() {
                 @Override
                 public void onCommand(String command) {
@@ -204,7 +215,6 @@ public class ControlFragment extends Fragment {
             joystickControl.hide();
             gamePadControl.hide();
             accelerometerControl.show();
-            notify.pushNotify("Accelerometer feature is not supported yet :(");
         }
     }
 
@@ -251,8 +261,6 @@ public class ControlFragment extends Fragment {
             connectionStatusText.setText(status);
         }
 
-        notify.pushNotify(status);
-
         /* Connected successfully */
         if (status.equals(Constants.CONNECTED)) {
             connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_on));
@@ -278,17 +286,20 @@ public class ControlFragment extends Fragment {
                 public void connected() {
                     setConnectionStatus(Constants.CONNECTED);
                     loader.dismiss();
+                    notify.pushNotify(Constants.CONNECTED);
                 }
 
                 @Override
                 public void connectError() {
                     setConnectionStatus(Constants.CONNECT_ERROR);
                     loader.dismiss();
+                    notify.pushNotify(Constants.CONNECT_ERROR);
                 }
 
                 @Override
                 public void disconnected() {
                     setConnectionStatus(Constants.DISCONNECTED);
+                    notify.pushNotify(Constants.DISCONNECTED);
                 }
             };
 
@@ -297,6 +308,10 @@ public class ControlFragment extends Fragment {
 
             socketClient = new SocketClient(serverAddress, serverPort, socketEvent);
             socketClient.start();
+        } else {
+            /* Huh? */
+            updateControlText("");
+            updateResponseText("");
         }
     }
 
@@ -309,19 +324,42 @@ public class ControlFragment extends Fragment {
 
     /* On message received from socket */
     @SuppressLint("SetTextI18n")
-    public void onReceiveMessage(String message) {
-        if (serverResponseText != null && message != null) {
-            serverResponseText.setText("Res: " + message);
+    private void onReceiveMessage(String message) {
+        if (message != null) {
+            // TODO: handle here
+            updateResponseText(message);
         }
+    }
+
+    private void updateResponseText(String text) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serverResponseText != null) {
+                    serverResponseText.setText("Res: " + text);
+                }
+            }
+        });
     }
 
     /* Send message through socket */
     private void sendCommand(String command) {
-        controlStatusText.setText(command);
-
         if (socketClient != null && command != null) {
             socketClient.send(command);
         }
+
+        updateControlText(command);
+    }
+
+    private void updateControlText(String text) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (controlStatusText != null) {
+                    controlStatusText.setText(text);
+                }
+            }
+        });
     }
 
 }

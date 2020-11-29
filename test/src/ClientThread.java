@@ -11,20 +11,15 @@ public class ClientThread extends Thread {
     private static DataInputStream is = null;
     private static PrintStream os = null;
 
-    private int maxClientsCount;
-    private final ClientThread[] threads;
+    private int maxThreads;
     private OnMessageReceived messageListener;
 
-    public ClientThread(Socket clientSocket, ClientThread[] threads, OnMessageReceived messageListener) {
+    public ClientThread(Socket clientSocket, OnMessageReceived messageListener) {
         this.clientSocket = clientSocket;
-        this.threads = threads;
-        this.maxClientsCount = threads.length;
         this.messageListener = messageListener;
     }
 
     public void run() {
-        int maxClientsCount = this.maxClientsCount;
-        ClientThread[] threads = this.threads;
 
         try {
             /*
@@ -34,22 +29,25 @@ public class ClientThread extends Thread {
             os = new PrintStream(clientSocket.getOutputStream());
 
             /* Welcome the new the client. */
-            os.println("Welcome-You are connected");
             os.println("Enter your name: ");
 
-            String name;
             while (true) {
-                name = is.readLine().trim();
-                if (!name.equals("")) {
+                String name = is.readLine();
+
+                if (!name.equals("") && name != null) {
+                    clientName = name;
+
+                    if (messageListener != null) {
+                      messageListener.messageReceived("*** " + clientName + " joined");
+                    }
+
                     break;
                 }
             }
 
-            this.clientName = name;
-            messageListener.messageReceived("*** " + clientName + " joined");
-
             /* Start the conversation. */
             while (true) {
+              try {
                 String line = is.readLine();
 
                 /* Client quit the conversation by cmd /quit */
@@ -57,32 +55,17 @@ public class ClientThread extends Thread {
                     break;
                 }
 
-                /* The message is public, broadcast it to all other clients. */
-                synchronized (this) {
-                    for (int i = 0; i < maxClientsCount; i++) {
-                        if (threads[i] != null && threads[i].clientName != null) {
-                            threads[i].os.println(line);
-                        }
-                    }
-                }
-
-                this.os.println(line);
+                this.os.println("ok");
                 messageListener.messageReceived("<" + clientName + ">: " + line);
+
+              } catch (Exception e) {
+                System.out.println(e.toString());
+                break;
+              }
             }
 
             messageListener.messageReceived("*** " + clientName + " disconnected.");
-
-            /*
-             * Clean up. Set the current thread variable to null so that a new client
-             * could be accepted by the server.
-             */
-            synchronized (this) {
-                for (int i = 0; i < maxClientsCount; i++) {
-                    if (threads[i] == this) {
-                        threads[i] = null;
-                    }
-                }
-            }
+            messageListener.disconnected(this);
 
             /*
              * Close the output stream, close the input stream, close the socket.
@@ -92,12 +75,14 @@ public class ClientThread extends Thread {
             clientSocket.close();
         } catch (IOException e) {
             System.out.println(e);
+            messageListener.disconnected(this);
         }
     }
 
     //must be implemented in Server
     public interface OnMessageReceived {
         public void messageReceived(String message);
+        public void disconnected(ClientThread thread);
     }
 
 }

@@ -8,6 +8,8 @@
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_atom" />
 
 </merge>
