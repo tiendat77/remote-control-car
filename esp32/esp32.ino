@@ -22,7 +22,7 @@ const char* PASSWORD = "9WF^F^ua";
 //const char* PASSWORD = "XnU3Xz^`";
 
 //Static IP address configuration
-IPAddress staticIP(192, 168, 1, 100);
+IPAddress staticIP(192, 168, 1, 177);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress dns(8, 8, 8, 8);
@@ -33,17 +33,21 @@ WiFiClient client;
 char cmd[20];
 byte cmdIndex = 0;
 unsigned long cmdTime = 0;
+unsigned long duration;
 
-const int IN_A1 = 17;
-const int IN_A2 = 16;
-const int IN_B1 = 4;
-const int IN_B2 = 0;
+const int IN_A1 = 4;
+const int IN_A2 = 0;
+const int IN_B1 = 2;
+const int IN_B2 = 15;
 
 const int SIGNAL = 25;
 const int FUNC_1 = 33;
 const int FUNC_2 = 32;
 const int FUNC_3 = 35;
 const int FUNC_4 = 34;
+
+const int SRF_TRIG = 12;
+const int SRF_ECHO = 14;
 
 void connet();
 void host();
@@ -63,9 +67,11 @@ void setup() {
   pinMode(FUNC_2, OUTPUT);
   pinMode(FUNC_3, OUTPUT);
   pinMode(FUNC_4, OUTPUT);
+  pinMode(SRF_TRIG, OUTPUT);
+  pinMode(SRF_ECHO, INPUT);
 
   if (DEBUG) {
-    Serial.begin(9600);
+    Serial.begin(115200);
   }
 
   // Connect to WiFi
@@ -157,13 +163,15 @@ void handler(void * parameter) {
       client.stop();
       Serial.println("Client Disconnected.");
     }
+
+    Stop();
   }
 }
 
 void direct() {
 
   // Flood prevention
-  if (millis() - cmdTime < 500) {
+  if (millis() - cmdTime < 100) {
     return;
   }
 
@@ -171,6 +179,11 @@ void direct() {
   Serial.println(cmd);
 
   if (!strcmp(cmd, "go")) {
+    if (detectObstacles()) {
+      Serial.println("Obstacles detected");
+      return;
+    }
+
     Go();
     return;
   }
@@ -205,10 +218,36 @@ void direct() {
     return;
   }
 
-  if (!strcmp(cmd, "hello")) {
+  if (!strcmp(cmd, "f4")) {
     HighLight();
     return;
   }
+}
+
+boolean detectObstacles() {
+  int distance;
+
+  /* Send from TRIG */
+  digitalWrite(SRF_TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(SRF_TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(SRF_TRIG, LOW);
+
+  /* Receive on ECHO */
+  duration = pulseIn(SRF_ECHO, HIGH);
+  distance = int(duration/58.824);
+
+  Serial.print("duration ");
+  Serial.println(duration);
+  Serial.print("distance ");
+  Serial.println(distance);
+
+  if (distance < 7) {
+    return true;
+  }
+
+  return false;
 }
 
 /* HANDLE CAR DIRECTION */
@@ -220,35 +259,39 @@ void Stop() {
 }
 
 void Go() {
-  digitalWrite(IN_A1, HIGH);
-  digitalWrite(IN_A2, LOW);
+  digitalWrite(IN_A1, LOW);
+  digitalWrite(IN_A2, HIGH);
   digitalWrite(IN_B1, LOW);
   digitalWrite(IN_B2, HIGH);
-  delay(200);
+  delay(300);
+  Stop();
 }
 
 void Back() {
-  digitalWrite(IN_A1, LOW);
-  digitalWrite(IN_A2, HIGH);
+  digitalWrite(IN_A1, HIGH);
+  digitalWrite(IN_A2, LOW);
   digitalWrite(IN_B1, HIGH);
   digitalWrite(IN_B2, LOW);
-  delay(200);
+  delay(300);
+  Stop();
 }
 
 void TurnLeft() {
   digitalWrite(IN_A1, HIGH);
   digitalWrite(IN_A2, LOW);
-  digitalWrite(IN_B1, HIGH);
-  digitalWrite(IN_B2, LOW);
-  delay(150);
+  digitalWrite(IN_B1, LOW);
+  digitalWrite(IN_B2, HIGH);
+  delay(200);
+  Stop();
 }
 
 void TurnRight() {
   digitalWrite(IN_A1, LOW);
   digitalWrite(IN_A2, HIGH);
-  digitalWrite(IN_B1, LOW);
-  digitalWrite(IN_B2, HIGH);
-  delay(150);
+  digitalWrite(IN_B1, HIGH);
+  digitalWrite(IN_B2, LOW);
+  delay(200);
+  Stop();
 }
 
 /* HANDLE FUNCTIONS */
@@ -270,13 +313,7 @@ void Blink(void * parameter) {
 }
 
 void HighLight() {
-  xTaskCreate(
-    Blink,
-    "Blink",
-    1024,
-    NULL,
-    1,
-    NULL);
+  xTaskCreate(Blink, "Blink", 1024, NULL, 1, NULL);
 }
 
 void Function1() {
