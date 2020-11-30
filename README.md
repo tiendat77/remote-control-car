@@ -28,11 +28,11 @@ This project aims to build a Remote Control Car (RC Car) with Espressif ESP32 an
 
 ## Demos
 
-<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_1.png" alt="demo_1" />
+<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_1.jpg" alt="demo_1" />
 
-<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_2.png" alt="demo_2" />
+<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_2.jpg" alt="demo_2" />
 
-<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_3.png" alt="demo_3" />
+<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_3.jpg" alt="demo_3" />
 
 ## Contributing :sparkles:
 
