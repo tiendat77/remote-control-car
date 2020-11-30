@@ -1,7 +1,7 @@
 # Remote Control Car Project
 > Remote control car with android and esp32
 
-This project aims to build a WiFi Remote Control Car (RC Car) by Android Application
+This project aims to build a Remote Control Car (RC Car) with Espressif ESP32 and Android Remote Control Application.
 
 <p align="center">
   <img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/app-icon.png" with="120px" height="120px" alt="logo" />
