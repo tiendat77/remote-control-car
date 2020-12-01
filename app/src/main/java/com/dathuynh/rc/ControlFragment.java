@@ -73,6 +73,8 @@ public class ControlFragment extends Fragment {
         if (accelerometerControl != null) {
             accelerometerControl.unregister();
         }
+
+        closeSocket();
     }
 
     @Override
@@ -90,8 +92,8 @@ public class ControlFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.loadSettings();
-        this.setConnectionStatus(Constants.NOT_CONNECTED);
+        loadSettings();
+        setConnectionStatus(Constants.NOT_CONNECTED);
     }
 
     /**
