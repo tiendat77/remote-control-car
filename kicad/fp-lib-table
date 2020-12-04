@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name RC_Car)(type KiCad)(uri ${KIPRJMOD}/RC_Car.pretty)(options "")(descr ""))
+)

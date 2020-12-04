@@ -1,0 +1,82 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L RC_Car:ESP32-Node U?
+U 1 1 5FCA7AE0
+P 5700 4200
+F 0 "U?" H 5725 5515 50  0000 C CNN
+F 1 "ESP32-Node" H 5725 5424 50  0000 C CNN
+F 2 "" H 5700 4650 50  0001 C CNN
+F 3 "" H 5700 4650 50  0001 C CNN
+	1    5700 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L RC_Car:Battery_Pins BT?
+U 1 1 5FCA9697
+P 6150 1500
+F 0 "BT?" H 5828 1163 50  0000 L CNN
+F 1 "Battery_Pins" H 5828 1072 50  0000 L CNN
+F 2 "" H 5850 1250 50  0001 C CNN
+F 3 "" H 5850 1250 50  0001 C CNN
+	1    6150 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L RC_Car:L298_INPUT U?
+U 1 1 5FCA9CCE
+P 3750 4400
+F 0 "U?" V 4715 4767 50  0000 C CNN
+F 1 "L298_INPUT" V 4624 4767 50  0000 C CNN
+F 2 "" H 2950 5800 50  0001 C CNN
+F 3 "" H 2950 5800 50  0001 C CNN
+	1    3750 4400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L RC_Car:SRF_05 U?
+U 1 1 5FCAABC9
+P 6950 5100
+F 0 "U?" V 5854 5978 50  0000 L CNN
+F 1 "SRF_05" V 5945 5978 50  0000 L CNN
+F 2 "" H 6950 5100 50  0001 C CNN
+F 3 "" H 6950 5100 50  0001 C CNN
+	1    6950 5100
+	0    1    1    0   
+$EndComp
+$Comp
+L RC_Car:LED D?
+U 1 1 5FCAB30A
+P 2550 4000
+F 0 "D?" H 2008 4453 50  0000 L CNN
+F 1 "LED" H 2008 4362 50  0000 L CNN
+F 2 "" H 2550 4000 50  0001 C CNN
+F 3 "" H 2550 4000 50  0001 C CNN
+	1    2550 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L RC_Car:Resistor R?
+U 1 1 5FCABA16
+P 2450 4500
+F 0 "R?" H 1925 4915 50  0000 C CNN
+F 1 "Resistor" H 1925 4824 50  0000 C CNN
+F 2 "" H 2450 4500 50  0001 C CNN
+F 3 "" H 2450 4500 50  0001 C CNN
+	1    2450 4500
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
