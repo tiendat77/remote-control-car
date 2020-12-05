@@ -1,4 +1,4 @@
-18994371006763516
+19002406713799516
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -73479,12 +73479,47 @@ Potentiometer vertical Vishay T73YP
 3
 3
 RC_Car
+Domino_2_5.05mm
+
+
+0
+0
+0
+RC_Car
 ESP32_Node
 
 
 0
+38
+38
+RC_Car
+L298_Input
+
+
 0
+4
+4
+RC_Car
+Led
+
+
 0
+2
+2
+RC_Car
+Resistor
+
+
+0
+2
+2
+RC_Car
+SRF05
+
+
+0
+5
+5
 RF
 Skyworks_SKY13575_639LF
 http://www.skyworksinc.com/uploads/documents/SKY13575_639LF_203270D.pdf
