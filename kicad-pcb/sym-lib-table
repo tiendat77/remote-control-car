@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name RC_Car)(type Legacy)(uri ${KIPRJMOD}/RC_Car.lib)(options "")(descr ""))
+  (lib (name esp32-rescue)(type Legacy)(uri ${KIPRJMOD}/esp32-rescue.lib)(options "")(descr ""))
+)
