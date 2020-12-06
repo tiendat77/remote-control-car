@@ -26,13 +26,18 @@ This project aims to build a Remote Control Car (RC Car) with Espressif ESP32 an
 - Changeable themes.
 - Supports 3 type of control: buttons, joystick, motion sensor (tilt to turn).
 
-## Demos
+## Demos :boom:
 
 <img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_1.jpg" alt="demo_1" />
 
 <img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_2.jpg" alt="demo_2" />
 
 <img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/demo_3.jpg" alt="demo_3" />
+
+## Future plans :eyes:
+
+  - [ ] Install camera
+  - [ ] Build wireless handle remote controller
 
 ## Contributing :sparkles:
 
