@@ -34,10 +34,11 @@ sudo apt install kicad-demos
 <img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_schematic.png" alt="schematic" />
 
 ## RC Car PCB
-
-<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_1.png" alt="pcb1" />
-
-<img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_2.png" alt="pcb2" />
-
+<table>
+  <tr>
+    <td><img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_1.png" alt="pcb1" /></td>
+    <td><img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_2.png" alt="pcb2" /></td>
+  </tr>
+</table>
 
 [PDF](https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb.pdf)
