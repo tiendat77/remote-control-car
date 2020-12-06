@@ -8,12 +8,12 @@ This project aims to build a Remote Control Car (RC Car) with Espressif ESP32 an
 </p>
 
 ## Requirements :alien:
-1. RC Car. Check out [building instructions](https://github.com/tiendat77/remote-control-car/tree/master/esp32)
+1. RC Car. Check out [building instructions](https://github.com/tiendat77/remote-control-car/tree/master/rc-car)
 2. Android phone running 5.0 (Lollipop) or higher
 3. WiFi network
 
 ## Usage :book:
-1. Upload [the sketch](https://github.com/tiendat77/remote-control-car/blob/master/esp32/esp32.ino) to the RC Car via [Arduino IDE](https://www.arduino.cc/en/software)
+1. Upload [the sketch](https://github.com/tiendat77/remote-control-car/blob/master/rc-car/rc-car.ino) to the RC Car via [Arduino IDE](https://www.arduino.cc/en/software)
 2. Install [Car Controller](https://github.com/tiendat77/remote-control-car/blob/master/CarController.apk) application to your smartphone
 3. Connect RC Car and your smartphone to the same WiFi network
 4. Open Car Controller application, then open *App Settings* and make sure *RC Car IP Address* is correct.

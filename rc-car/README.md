@@ -23,4 +23,3 @@ sudo chmod a+rw /dev/ttyUSB0
 ```
 
 ## Remote Control Car with ESP32
-
