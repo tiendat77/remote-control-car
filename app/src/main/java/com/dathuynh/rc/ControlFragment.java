@@ -1,5 +1,6 @@
 package com.dathuynh.rc;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -117,6 +120,10 @@ public class ControlFragment extends Fragment {
         connectionStatusText = (TextView) view.findViewById(R.id.connection_status);
         serverResponseText = (TextView) view.findViewById(R.id.server_response);
         connectionStatusDot = (FloatingActionButton) view.findViewById(R.id.button_connection_dot);
+
+        Animation animation1;
+        animation1 = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
+        connectionStatusDot.startAnimation(animation1);
 
         directionLayoutContainer = (RelativeLayout) view.findViewById(R.id.control_direction_wrapper);
         functionLayoutContainer = (RelativeLayout) view.findViewById(R.id.control_function_wrapper);
@@ -266,6 +273,7 @@ public class ControlFragment extends Fragment {
         /* Connected successfully */
         if (status.equals(Constants.CONNECTED)) {
             connectionStatusDot.setImageDrawable(getResources().getDrawable(R.drawable.ic_light_on));
+            connectionStatusDot.clearAnimation();
             return;
         }
 

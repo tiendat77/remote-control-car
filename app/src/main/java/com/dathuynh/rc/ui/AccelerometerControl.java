@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -42,8 +44,13 @@ public class AccelerometerControl extends RelativeLayout implements SensorEventL
     private float defaultY = 0;
 
     private long lastChangeTime = 0;
+    private int lastCommand;
 
     private ImageView accelerometerImage;
+    private Animation animMoveDown;
+    private Animation animMoveUp;
+    private Animation animTurnLeft;
+    private Animation animTurnRight;
 
     public AccelerometerControl(Context context) {
         super(context);
@@ -63,6 +70,10 @@ public class AccelerometerControl extends RelativeLayout implements SensorEventL
 
     private void setUIRef() {
         accelerometerImage = (ImageView) getChildAt(0);
+        animMoveDown = AnimationUtils.loadAnimation(getContext(), R.anim.move_down);
+        animMoveUp = AnimationUtils.loadAnimation(getContext(), R.anim.move_up);
+        animTurnLeft = AnimationUtils.loadAnimation(getContext(), R.anim.turn_left);
+        animTurnRight = AnimationUtils.loadAnimation(getContext(), R.anim.turn_right);
     }
 
     private void setListener() {
@@ -98,6 +109,48 @@ public class AccelerometerControl extends RelativeLayout implements SensorEventL
         // if (vibrator != null) {
         //     vibrator.vibrate(40);
         // }
+    }
+
+    private void startAnimation(int direction) {
+        switch (direction) {
+            case 1: {
+                if (lastCommand != 1) {
+                    accelerometerImage.startAnimation(animMoveUp);
+                    lastCommand = 1;
+                }
+                break;
+            }
+
+            case 2: {
+                if (lastCommand != 2) {
+                    accelerometerImage.startAnimation(animMoveDown);
+                    lastCommand = 2;
+                }
+                break;
+            }
+
+            case 3: {
+                if (lastCommand != 3) {
+                    accelerometerImage.startAnimation(animTurnLeft);
+                    lastCommand = 3;
+                }
+                break;
+            }
+
+            case 4: {
+                if (lastCommand != 4) {
+                    accelerometerImage.startAnimation(animTurnRight);
+                    lastCommand = 4;
+                }
+                break;
+            }
+
+            default: {
+                lastCommand = 0;
+                accelerometerImage.clearAnimation();
+                break;
+            }
+        }
     }
 
     public void hide() {
@@ -170,22 +223,29 @@ public class AccelerometerControl extends RelativeLayout implements SensorEventL
 
         if (deltaX < -3) {
             onCommand(Constants.CMD_GO);
+            startAnimation(1);
             return;
         }
 
         if (deltaX > 3) {
             onCommand(Constants.CMD_BACK);
+            startAnimation(2);
             return;
         }
 
         if (deltaY > 3) {
             onCommand(Constants.CMD_RIGHT);
+            startAnimation(4);
             return;
         }
 
         if (deltaY < -3) {
             onCommand(Constants.CMD_LEFT);
+            startAnimation(3);
+            return;
         }
+
+        startAnimation(0);
     }
 
     @Override
