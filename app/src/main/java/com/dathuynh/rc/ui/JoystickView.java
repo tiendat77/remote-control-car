@@ -1,13 +1,11 @@
 package com.dathuynh.rc.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -182,12 +180,6 @@ public class JoystickView extends View implements Runnable {
 
 
     /**
-     * Alpha of the border (to use when changing color dynamically)
-     */
-    private int mBorderAlpha;
-
-
-    /**
      * Based on mBorderRadius but a bit smaller (minus half the stroke size of the border)
      */
     private float mBackgroundRadius;
@@ -258,68 +250,40 @@ public class JoystickView extends View implements Runnable {
      */
     public JoystickView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
 
-        TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.JoystickView,
-                0, 0
-        );
-
-        int buttonColor;
-        int borderColor;
-        int backgroundColor;
-        int borderWidth;
-        Drawable buttonDrawable;
-        try {
-            buttonColor = styledAttributes.getColor(R.styleable.JoystickView_JV_buttonColor, DEFAULT_COLOR_BUTTON);
-            borderColor = styledAttributes.getColor(R.styleable.JoystickView_JV_borderColor, DEFAULT_COLOR_BORDER);
-            mBorderAlpha = styledAttributes.getInt(R.styleable.JoystickView_JV_borderAlpha, DEFAULT_ALPHA_BORDER);
-            backgroundColor = styledAttributes.getColor(R.styleable.JoystickView_JV_backgroundColor, DEFAULT_BACKGROUND_COLOR);
-            borderWidth = styledAttributes.getDimensionPixelSize(R.styleable.JoystickView_JV_borderWidth, DEFAULT_WIDTH_BORDER);
-            mFixedCenter = styledAttributes.getBoolean(R.styleable.JoystickView_JV_fixedCenter, DEFAULT_FIXED_CENTER);
-            mAutoReCenterButton = styledAttributes.getBoolean(R.styleable.JoystickView_JV_autoReCenterButton, DEFAULT_AUTO_RECENTER_BUTTON);
-            mButtonStickToBorder = styledAttributes.getBoolean(R.styleable.JoystickView_JV_buttonStickToBorder, DEFAULT_BUTTON_STICK_TO_BORDER);
-            buttonDrawable = styledAttributes.getDrawable(R.styleable.JoystickView_JV_buttonImage);
-            mEnabled = styledAttributes.getBoolean(R.styleable.JoystickView_JV_enabled, true);
-            mButtonSizeRatio = styledAttributes.getFraction(R.styleable.JoystickView_JV_buttonSizeRatio, 1, 1, 0.25f);
-            mBackgroundSizeRatio = styledAttributes.getFraction(R.styleable.JoystickView_JV_backgroundSizeRatio, 1, 1, 0.75f);
-            mButtonDirection = styledAttributes.getInteger(R.styleable.JoystickView_JV_buttonDirection, BUTTON_DIRECTION_BOTH);
-        } finally {
-            styledAttributes.recycle();
-        }
-
+    private void init() {
         // Initialize the drawing according to attributes
-
         mPaintCircleButton = new Paint();
         mPaintCircleButton.setAntiAlias(true);
-        mPaintCircleButton.setColor(buttonColor);
+        mPaintCircleButton.setColor(DEFAULT_COLOR_BUTTON);
         mPaintCircleButton.setStyle(Paint.Style.FILL);
 
-        if (buttonDrawable != null) {
-            if (buttonDrawable instanceof BitmapDrawable) {
-                mButtonBitmap = ((BitmapDrawable) buttonDrawable).getBitmap();
-                mPaintBitmapButton = new Paint();
-            }
-        }
+        mFixedCenter = DEFAULT_FIXED_CENTER;
+        mAutoReCenterButton = DEFAULT_AUTO_RECENTER_BUTTON;
+        mButtonStickToBorder = DEFAULT_BUTTON_STICK_TO_BORDER;
+        mEnabled = true;
+        mButtonSizeRatio = 0.25f;
+        mBackgroundSizeRatio = 0.75f;
+        mButtonDirection = BUTTON_DIRECTION_BOTH;
+
+        mButtonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_joystick_ball);
+        mPaintBitmapButton = new Paint();
 
         mPaintCircleBorder = new Paint();
         mPaintCircleBorder.setAntiAlias(true);
-        mPaintCircleBorder.setColor(borderColor);
+        mPaintCircleBorder.setColor(DEFAULT_COLOR_BORDER);
         mPaintCircleBorder.setStyle(Paint.Style.STROKE);
-        mPaintCircleBorder.setStrokeWidth(borderWidth);
-
-        if (borderColor != Color.TRANSPARENT) {
-            mPaintCircleBorder.setAlpha(mBorderAlpha);
-        }
+        mPaintCircleBorder.setStrokeWidth(DEFAULT_WIDTH_BORDER);
 
         mPaintBackground = new Paint();
         mPaintBackground.setAntiAlias(true);
-        mPaintBackground.setColor(backgroundColor);
+        mPaintBackground.setColor(DEFAULT_BACKGROUND_COLOR);
         mPaintBackground.setStyle(Paint.Style.FILL);
 
 
         // Init Runnable for MultiLongPress
-
         mRunnableMultipleLongPress = new Runnable() {
             @Override
             public void run() {
@@ -564,160 +528,12 @@ public class JoystickView extends View implements Runnable {
         mPosY = mCenterY;
     }
 
-
-    /**
-     * Return the current direction allowed for the button to move
-     * @return Actually return an integer corresponding to the direction:
-     * - A negative value is horizontal axe,
-     * - A positive value is vertical axe,
-     * - Zero means both axes
-     */
-    public int getButtonDirection() {
-        return mButtonDirection;
-    }
-
-
     /**
      * Return the state of the joystick. False when the button don't move.
      * @return the state of the joystick
      */
     public boolean isEnabled() {
         return mEnabled;
-    }
-
-
-    /**
-     * Return the size of the button (as a ratio of the total width/height)
-     * Default is 0.25 (25%).
-     * @return button size (value between 0.0 and 1.0)
-     */
-    public float getButtonSizeRatio() {
-        return mButtonSizeRatio;
-    }
-
-
-    /**
-     * Return the size of the background (as a ratio of the total width/height)
-     * Default is 0.75 (75%).
-     * @return background size (value between 0.0 and 1.0)
-     */
-    public float getmBackgroundSizeRatio() {
-        return mBackgroundSizeRatio;
-    }
-
-
-    /**
-     * Return the current behavior of the auto re-center button
-     * @return True if automatically re-centered or False if not
-     */
-    public boolean isAutoReCenterButton() {
-        return mAutoReCenterButton;
-    }
-
-
-    /**
-     * Return the current behavior of the button stick to border
-     * @return True if the button stick to the border otherwise False
-     */
-    public boolean isButtonStickToBorder() {
-        return mButtonStickToBorder;
-    }
-
-
-    /**
-     * Return the relative X coordinate of button center related
-     * to top-left virtual corner of the border
-     * @return coordinate of X (normalized between 0 and 100)
-     */
-    public int getNormalizedX() {
-        if (getWidth() == 0) {
-            return 50;
-        }
-        return Math.round((mPosX-mButtonRadius)*100.0f/(getWidth()-mButtonRadius*2));
-    }
-
-
-    /**
-     * Return the relative Y coordinate of the button center related
-     * to top-left virtual corner of the border
-     * @return coordinate of Y (normalized between 0 and 100)
-     */
-    public int getNormalizedY() {
-        if (getHeight() == 0) {
-            return 50;
-        }
-        return Math.round((mPosY-mButtonRadius)*100.0f/(getHeight()-mButtonRadius*2));
-    }
-
-
-    /**
-     * Return the alpha of the border
-     * @return it should be an integer between 0 and 255 previously set
-     */
-    public int getBorderAlpha() {
-        return mBorderAlpha;
-    }
-
-    /*
-    SETTERS
-     */
-
-
-    /**
-     * Set an image to the button with a drawable
-     * @param d drawable to pick the image
-     */
-    public void setButtonDrawable(Drawable d) {
-        if (d != null) {
-            if (d instanceof BitmapDrawable) {
-                mButtonBitmap = ((BitmapDrawable) d).getBitmap();
-
-                if (mButtonRadius != 0) {
-                    mButtonBitmap = Bitmap.createScaledBitmap(
-                            mButtonBitmap,
-                            mButtonRadius * 2,
-                            mButtonRadius * 2,
-                            true);
-                }
-
-                if (mPaintBitmapButton != null)
-                    mPaintBitmapButton = new Paint();
-            }
-        }
-    }
-
-
-    /**
-     * Set the button color for this JoystickView.
-     * @param color the color of the button
-     */
-    public void setButtonColor(int color) {
-        mPaintCircleButton.setColor(color);
-        invalidate();
-    }
-
-
-    /**
-     * Set the border color for this JoystickView.
-     * @param color the color of the border
-     */
-    public void setBorderColor(int color) {
-        mPaintCircleBorder.setColor(color);
-        if (color != Color.TRANSPARENT) {
-            mPaintCircleBorder.setAlpha(mBorderAlpha);
-        }
-        invalidate();
-    }
-
-
-    /**
-     * Set the border alpha for this JoystickView.
-     * @param alpha the transparency of the border between 0 and 255
-     */
-    public void setBorderAlpha(int alpha) {
-        mBorderAlpha = alpha;
-        mPaintCircleBorder.setAlpha(alpha);
-        invalidate();
     }
 
 
@@ -731,27 +547,6 @@ public class JoystickView extends View implements Runnable {
         invalidate();
     }
 
-
-    /**
-     * Set the border width for this JoystickView.
-     * @param width the width of the border
-     */
-    public void setBorderWidth(int width) {
-        mPaintCircleBorder.setStrokeWidth(width);
-        mBackgroundRadius = mBorderRadius - (width / 2.0f);
-        invalidate();
-    }
-
-
-    /**
-     * Register a callback to be invoked when this JoystickView's button is moved
-     * @param l The callback that will run
-     */
-    public void setOnMoveListener(OnMoveListener l) {
-        setOnMoveListener(l, DEFAULT_LOOP_INTERVAL);
-    }
-
-
     /**
      * Register a callback to be invoked when this JoystickView's button is moved
      * @param l The callback that will run
@@ -762,30 +557,6 @@ public class JoystickView extends View implements Runnable {
         mLoopInterval = loopInterval;
     }
 
-
-    /**
-     * Register a callback to be invoked when this JoystickView is touch and held by multiple pointers
-     * @param l The callback that will run
-     */
-    public void setOnMultiLongPressListener(OnMultipleLongPressListener l) {
-        mOnMultipleLongPressListener = l;
-    }
-
-
-    /**
-     * Set the joystick center's behavior (fixed or auto-defined)
-     * @param fixedCenter True for fixed center, False for auto-defined center based on touch down
-     */
-    public void setFixedCenter(boolean fixedCenter) {
-        // if we set to "fixed" we make sure to re-init position related to the width of the joystick
-        if (fixedCenter) {
-            initPosition();
-        }
-        mFixedCenter = fixedCenter;
-        invalidate();
-    }
-
-
     /**
      * Enable or disable the joystick
      * @param enabled False mean the button won't move and onMove won't be called
@@ -793,67 +564,6 @@ public class JoystickView extends View implements Runnable {
     public void setEnabled(boolean enabled) {
         mEnabled = enabled;
     }
-
-
-    /**
-     * Set the joystick button size (as a fraction of the real width/height)
-     * By default it is 25% (0.25).
-     * @param newRatio between 0.0 and 1.0
-     */
-    public void setButtonSizeRatio(float newRatio) {
-        if (newRatio > 0.0f & newRatio <= 1.0f) {
-            mButtonSizeRatio = newRatio;
-        }
-    }
-
-
-    /**
-     * Set the joystick button size (as a fraction of the real width/height)
-     * By default it is 75% (0.75).
-     * Not working if the background is an image.
-     * @param newRatio between 0.0 and 1.0
-     */
-    public void setBackgroundSizeRatio(float newRatio) {
-        if (newRatio > 0.0f & newRatio <= 1.0f) {
-            mBackgroundSizeRatio = newRatio;
-        }
-    }
-
-
-    /**
-     * Set the current behavior of the auto re-center button
-     * @param b True if automatically re-centered or False if not
-     */
-    public void setAutoReCenterButton(boolean b) {
-        mAutoReCenterButton = b;
-    }
-
-
-    /**
-     * Set the current behavior of the button stick to border
-     * @param b True if the button stick to the border or False (default) if not
-     */
-    public void setButtonStickToBorder(boolean b) {
-        mButtonStickToBorder = b;
-    }
-
-
-    /**
-     * Set the current authorized direction for the button to move
-     * @param direction the value will define the authorized direction:
-     *                  - any negative value (such as -1) for horizontal axe
-     *                  - any positive value (such as 1) for vertical axe
-     *                  - zero (0) for the full direction (both axes)
-     */
-    public void setButtonDirection(int direction) {
-        mButtonDirection = direction;
-    }
-
-
-    /*
-    IMPLEMENTS
-     */
-
 
     @Override // Runnable
     public void run() {

@@ -4,8 +4,6 @@
     <com.dathuynh.rc.ui.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_joystick_bg"
-        custom:JV_buttonImage="@drawable/ic_joystick_ball"
-        custom:JV_fixedCenter="false" />
+        android:background="@drawable/ic_joystick_bg" />
 
 </merge>

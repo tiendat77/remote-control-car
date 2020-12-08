@@ -32,6 +32,12 @@ public class GamePadControl extends RelativeLayout {
         init(context);
     }
 
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
     private void init(Context context) {
         inflate(context, R.layout.ui_game_pad_control, this);
         setUIRef();
@@ -47,10 +53,19 @@ public class GamePadControl extends RelativeLayout {
 
     private void setListener() {
         if (upButton != null) {
-            upButton.setOnClickListener(new View.OnClickListener() {
+//            upButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    onCommand(Constants.CMD_GO);
+//                }
+//            });
+
+            upButton.setOnTouchListener(new OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    onCommand(Constants.CMD_GO);
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    v.performClick();
+                    return true;
                 }
             });
         }
