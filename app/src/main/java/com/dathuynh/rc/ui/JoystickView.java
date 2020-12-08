@@ -1,5 +1,4 @@
-package io.github.controlwear.virtual.joystick.android;
-
+package com.dathuynh.rc.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,9 +14,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-public class JoystickView extends View
-        implements
-        Runnable {
+/**
+ * Authors:
+ * https://github.com/controlwear/virtual-joystick-android/issues
+ * */
+
+import com.dathuynh.rc.R;
+
+public class JoystickView extends View implements Runnable {
 
 
     /*
@@ -868,4 +872,5 @@ public class JoystickView extends View
             }
         }
     }
+
 }

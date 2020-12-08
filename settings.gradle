@@ -1,3 +1,2 @@
-include ':virtualjoystick'
 include ':app'
 rootProject.name = "Remote Control Car"
