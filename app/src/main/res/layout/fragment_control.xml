@@ -32,6 +32,7 @@
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/button_connection_dot"
                         style="@style/Theme.RemoteControlCar.FabMini"
+                        android:tooltipText="Click me"
                         android:contentDescription="DOT STATUS"
                         android:src="@drawable/ic_light_off" />
 

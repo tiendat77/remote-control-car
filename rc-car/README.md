@@ -83,6 +83,14 @@ Open Arduino IDE and upload [the sketch](https://github.com/tiendat77/remote-con
 **Note**: change WiFi configuration to yours.
 
 ### Make PCB
+
+<table>
+  <tr>
+    <td><img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_1.png" height="700px" alt="pcb1" /></td>
+    <td><img src="https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb_2.png" height="700px" alt="pcb2" /></td>
+  </tr>
+</table>
+
 Print [PCB](https://github.com/tiendat77/remote-control-car/blob/master/assets/rc_car_pcb.pdf) and assembly.
 
 ### 3D printed RC car chassis

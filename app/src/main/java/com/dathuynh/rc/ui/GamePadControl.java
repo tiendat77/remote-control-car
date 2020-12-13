@@ -1,8 +1,11 @@
 package com.dathuynh.rc.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -29,6 +32,12 @@ public class GamePadControl extends RelativeLayout {
         init(context);
     }
 
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
     private void init(Context context) {
         inflate(context, R.layout.ui_game_pad_control, this);
         setUIRef();
@@ -44,10 +53,19 @@ public class GamePadControl extends RelativeLayout {
 
     private void setListener() {
         if (upButton != null) {
-            upButton.setOnClickListener(new View.OnClickListener() {
+//            upButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    onCommand(Constants.CMD_GO);
+//                }
+//            });
+
+            upButton.setOnTouchListener(new OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    onCommand(Constants.CMD_GO);
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    v.performClick();
+                    return true;
                 }
             });
         }

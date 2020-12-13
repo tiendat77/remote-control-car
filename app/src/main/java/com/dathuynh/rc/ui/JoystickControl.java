@@ -8,8 +8,6 @@ import android.widget.RelativeLayout;
 import com.dathuynh.rc.Constants;
 import com.dathuynh.rc.R;
 
-import io.github.controlwear.virtual.joystick.android.JoystickView;
-
 public class JoystickControl extends RelativeLayout {
 
     private OnCommandListener onCommandListener;
