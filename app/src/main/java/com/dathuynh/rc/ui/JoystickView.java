@@ -128,8 +128,6 @@ public class JoystickView extends View implements Runnable {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        drawArrow(canvas);
-
         // Draw the button from image
         if (circleBitmap != null) {
             canvas.drawBitmap(
